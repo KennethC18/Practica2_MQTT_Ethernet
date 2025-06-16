@@ -20,12 +20,6 @@
 #include "lwip/apps/mqtt.h"
 #include "lwip/tcpip.h"
 
-// FIXME cleanup
-
-/*******************************************************************************
- * Definitions
- ******************************************************************************/
-
 /*! @brief MQTT server host name or IP address. */
 #ifndef EXAMPLE_MQTT_SERVER_HOST
 #define EXAMPLE_MQTT_SERVER_HOST "broker.hivemq.com"
@@ -148,7 +142,7 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
  */
 static void mqtt_subscribe_topics(mqtt_client_t *client)
 {
-    static const char *topics[] = {"lwip_topic/#", "lwip_other/#"};
+    static const char *topics[] = {"switch2/#", "switch1/#"};
     int qos[]                   = {0, 1};
     err_t err;
     int i;
