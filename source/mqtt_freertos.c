@@ -20,6 +20,8 @@
 #include "lwip/apps/mqtt.h"
 #include "lwip/tcpip.h"
 
+#include "Drivers/LED.h"
+
 /*! @brief MQTT server host name or IP address. */
 #ifndef EXAMPLE_MQTT_SERVER_HOST
 #define EXAMPLE_MQTT_SERVER_HOST "broker.hivemq.com"
@@ -129,6 +131,15 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
         {
             PRINTF("\\x%02x", data[i]);
         }
+        if((data[i] == '1') && (i == 0)){
+        	LED_Toggle(LED_RED_COLOUR);
+        }
+        else if((data[i] == '1') && (i == 1)){
+        	LED_Toggle(LED_GREEN_COLOUR);
+        }
+        else if((data[i] == '1') && (i == 2)){
+        	LED_Toggle(LED_BLUE_COLOUR);
+        }
     }
 
     if (flags & MQTT_DATA_FLAG_LAST)
@@ -142,8 +153,8 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
  */
 static void mqtt_subscribe_topics(mqtt_client_t *client)
 {
-    static const char *topics[] = {"switch2/#", "switch1/#"};
-    int qos[]                   = {0, 1};
+    static const char *topics[] = {"switchred/#", "switchgreen/#", "switchblue/#"};
+    int qos[]                   = {0, 0, 0};
     err_t err;
     int i;
 
@@ -391,6 +402,8 @@ void mqtt_freertos_run_thread(struct netif *netif)
         {
         }
     }
+
+    LED_Init();
 
     generate_client_id();
 
