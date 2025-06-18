@@ -10,8 +10,7 @@
 /*******************************************************************************
  * Includes
  ******************************************************************************/
-#include "mqtt_freertos.h"
-
+#include <MQTT.h>
 #include "board.h"
 #include "fsl_silicon_id.h"
 
@@ -257,8 +256,8 @@ static void mqtt_message_published_cb(void *arg, err_t err)
  */
 static void publish_message(void *ctx)
 {
-    static const char *topic   = "lwip_topic/100";
-    static const char *message = "message from board";
+    static const char *topic   = "motion_detect/movement";
+    static const char *message = "Movimiento detectado";
 
     LWIP_UNUSED_ARG(ctx);
 

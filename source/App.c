@@ -10,12 +10,11 @@
 /*******************************************************************************
  * Includes
  ******************************************************************************/
+#include <MQTT.h>
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "board.h"
 #include "fsl_phy.h"
-#include "mqtt_freertos.h"
-
 #include "lwip/opt.h"
 #include "lwip/api.h"
 #include "lwip/dhcp.h"
@@ -197,34 +196,38 @@ static void stack_init(void *arg)
     vTaskDelete(NULL);
 }
 
+void HW_Init(void){
+	gpio_pin_config_t gpio_config = {kGPIO_DigitalOutput, 1U};
+
+	BOARD_InitBootPins();
+	BOARD_InitBootClocks();
+	BOARD_InitDebugConsole();
+	BOARD_InitModuleClock();
+
+	ENET_ResetHardware();
+
+	GPIO_PortInit(GPIO, 0U);
+	GPIO_PortInit(GPIO, 1U);
+	GPIO_PinInit(GPIO, 0U, 21U, &gpio_config); /* ENET_RST */
+	gpio_config.pinDirection = kGPIO_DigitalInput;
+	gpio_config.outputLogic  = 0U;
+	GPIO_PinInit(GPIO, 1U, 23U, &gpio_config); /* ENET_INT */
+
+	GPIO_PinWrite(GPIO, 0U, 21U, 0U);
+	SDK_DelayAtLeastUs(1000000, CLOCK_GetCoreSysClkFreq());
+	GPIO_PinWrite(GPIO, 0U, 21U, 1U);
+
+	MDIO_Init();
+	g_phy_resource.read  = MDIO_Read;
+	g_phy_resource.write = MDIO_Write;
+}
+
 /*!
  * @brief Main function
  */
 int main(void)
 {
-    gpio_pin_config_t gpio_config = {kGPIO_DigitalOutput, 1U};
-
-    BOARD_InitBootPins();
-    BOARD_InitBootClocks();
-    BOARD_InitDebugConsole();
-    BOARD_InitModuleClock();
-
-    ENET_ResetHardware();
-
-    GPIO_PortInit(GPIO, 0U);
-    GPIO_PortInit(GPIO, 1U);
-    GPIO_PinInit(GPIO, 0U, 21U, &gpio_config); /* ENET_RST */
-    gpio_config.pinDirection = kGPIO_DigitalInput;
-    gpio_config.outputLogic  = 0U;
-    GPIO_PinInit(GPIO, 1U, 23U, &gpio_config); /* ENET_INT */
-
-    GPIO_PinWrite(GPIO, 0U, 21U, 0U);
-    SDK_DelayAtLeastUs(1000000, CLOCK_GetCoreSysClkFreq());
-    GPIO_PinWrite(GPIO, 0U, 21U, 1U);
-
-    MDIO_Init();
-    g_phy_resource.read  = MDIO_Read;
-    g_phy_resource.write = MDIO_Write;
+    HW_Init();
 
     /* Initialize lwIP from thread */
     if (sys_thread_new("main", stack_init, NULL, INIT_THREAD_STACKSIZE, INIT_THREAD_PRIO) == NULL)
