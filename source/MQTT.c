@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Drivers/LED.h"
+#include "Drivers/BUTTON.h"
 
 /*! @brief MQTT server host name or IP address. */
 #ifndef EXAMPLE_MQTT_SERVER_HOST
@@ -370,9 +371,9 @@ static void publish_message(void *ctx)
 
     LWIP_UNUSED_ARG(ctx);
 
-    PRINTF("Going to publish to the topic \"%s\"...\r\n", topic);
+    PRINTF("Going to publish to the topic \"%s\"...\r\n", topic2);
 
-    mqtt_publish(mqtt_client, topic, message, strlen(message), 1, 0, mqtt_message_published_cb, (void *)topic);
+    mqtt_publish(mqtt_client, topic2, message2, strlen(message2), 1, 0, mqtt_message_published_cb, (void *)topic2);
 }
 
 /*!
@@ -420,22 +421,38 @@ static void app_thread(void *arg)
     }
 
     /* Publish some messages */
-    for (i = 0; i < 5;)
-    {
-        if (connected)
-        {
-            err = tcpip_callback(publish_message, NULL);
-            if (err != ERR_OK)
-            {
-                PRINTF("Failed to invoke publishing of a message on the tcpip_thread: %d.\r\n", err);
-            }
-            i++;
-        }
-
-        sys_msleep(1000U);
-    }
+//    for (i = 0; i < 5;)
+//    {
+//        if (connected)
+//        {
+//            err = tcpip_callback(publish_message, NULL);
+//            if (err != ERR_OK)
+//            {
+//                PRINTF("Failed to invoke publishing of a message on the tcpip_thread: %d.\r\n", err);
+//            }
+//            i++;
+//        }
+//
+//        sys_msleep(1000U);
+//    }
 
     vTaskDelete(NULL);
+}
+
+static void button_pressed_callback(void)
+{
+    if (connected)
+    {
+        err_t err = tcpip_callback(publish_message, NULL);
+        if (err != ERR_OK)
+        {
+            PRINTF("Failed to invoke publishing of temperature message: %d.\r\n", err);
+        }
+    }
+    else
+    {
+        PRINTF("Cannot publish: Not connected to MQTT broker.\r\n");
+    }
 }
 
 static void generate_client_id(void)
@@ -511,6 +528,7 @@ void mqtt_freertos_run_thread(struct netif *netif)
         }
     }
 
+    BUTTON_Init(button_pressed_callback);
     LED_Init();
 
     generate_client_id();
@@ -519,4 +537,9 @@ void mqtt_freertos_run_thread(struct netif *netif)
     {
         LWIP_ASSERT("mqtt_freertos_start_thread(): Task creation failed.", 0);
     }
+}
+
+void GPIO_INTA_IRQHandler(void)
+{
+    BUTTON_IRQHandler();
 }

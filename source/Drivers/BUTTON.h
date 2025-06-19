@@ -24,9 +24,8 @@ typedef void (*button_callback_t)(void);
  * @brief Initialize the button hardware and interrupt.
  *
  * @param callback Optional callback function to be called when the button is pressed.
- * @return status_t kStatus_Success if initialization is successful, otherwise an error code.
  */
-status_t BUTTON_Init(button_callback_t callback);
+void BUTTON_Init(button_callback_t callback);
 
 /*!
  * @brief Check if the button is pressed.

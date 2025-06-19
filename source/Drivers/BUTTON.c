@@ -11,8 +11,24 @@
 static volatile bool s_buttonInterruptFlag = false;
 static button_callback_t s_buttonCallback = NULL;
 
-status_t BUTTON_Init(button_callback_t callback)
+void BUTTON_Init(button_callback_t callback)
 {
+	/* Enables the clock for the GPIO0 module */
+	GPIO_PortInit(GPIO, 0);
+
+	gpio_pin_config_t gpio0_pinM2_config = {
+		.pinDirection = kGPIO_DigitalInput,
+		.outputLogic = 0U
+	};
+	gpio_interrupt_config_t gpio0_pinM2_int_config = {
+		.mode = kGPIO_PinIntEnableEdge,
+		.polarity = kGPIO_PinIntEnableLowOrFall
+	};
+	/* Initialize GPIO functionality on pin PIO0_11 (pin M2)  */
+	GPIO_PinInit(GPIO, 0U, 11U, &gpio0_pinM2_config);
+	GPIO_SetPinInterruptConfig(GPIO, 0U, 11U, &gpio0_pinM2_int_config);
+	GPIO_PinEnableInterrupt(GPIO, 0U, 11U, (uint32_t)kGPIO_InterruptA);
+
     gpio_pin_config_t sw_config = {kGPIO_DigitalInput, 0};
     gpio_interrupt_config_t config = {kGPIO_PinIntEnableEdge, kGPIO_PinIntEnableLowOrFall};
 
@@ -24,8 +40,6 @@ status_t BUTTON_Init(button_callback_t callback)
     EnableIRQ(BUTTON_IRQ);
     GPIO_SetPinInterruptConfig(GPIO, BUTTON_SW_PORT, BUTTON_SW_PIN, &config);
     GPIO_PinEnableInterrupt(GPIO, BUTTON_SW_PORT, BUTTON_SW_PIN, 0);
-
-    return kStatus_Success;
 }
 
 bool BUTTON_IsPressed(void)
