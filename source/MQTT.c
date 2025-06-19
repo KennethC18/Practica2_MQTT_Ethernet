@@ -85,8 +85,6 @@ static volatile bool connected = false;
 uint8_t received_topic;
 
 uint8_t r,g,b;
-uint8_t night_light_state;
-
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -133,8 +131,7 @@ static void check_topic(const char *topic){
 	}
 }
 
-uint8_t str[20];
-void manage_night_light(const uint8_t *data, uint8_t len){
+void manage_night_light(const uint8_t *data){
 	r = g = b = 0;
 
 	if (data == NULL) {
@@ -222,7 +219,15 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
 //        	manage_smoke_topic();
         }
         else if(received_topic == 6){
-        	manage_night_light(data, len);
+        	manage_night_light(data);
+        }
+#endif
+#if defined(DEVICE2) && !defined(DEVICE1)
+        if(received_topic == 3){
+//        	manage_temp_topic();
+        }
+        else if(received_topic == 5){
+//        	manage_music_topic(data);
         }
 #endif
 
@@ -347,8 +352,21 @@ static void mqtt_message_published_cb(void *arg, err_t err)
  */
 static void publish_message(void *ctx)
 {
-    static const char *topic   = "motion_detect/movement";
-    static const char *message = "Movimiento detectado";
+#if defined(DEVICE1) && !defined(DEVICE2)
+	static const char *topic1   = TOPIC1;
+	static const char *message1 = "Movimiento detectado";
+
+	static const char *topic2   = TOPIC3;
+	static const char *message2 = "Temperatura 25 °C";
+#endif
+#if defined(DEVICE2) && !defined(DEVICE1)
+	static const char *topic1   = TOPIC2;
+	static const char *message1 = "Ruido detectado";
+
+	static const char *topic2   = TOPIC4;
+	static const char *message2 = "SMOKE";
+	static const char *message2 = "NO_SMOKE";
+#endif
 
     LWIP_UNUSED_ARG(ctx);
 
@@ -402,20 +420,20 @@ static void app_thread(void *arg)
     }
 
     /* Publish some messages */
-//    for (i = 0; i < 5;)
-//    {
-//        if (connected)
-//        {
-//            err = tcpip_callback(publish_message, NULL);
-//            if (err != ERR_OK)
-//            {
-//                PRINTF("Failed to invoke publishing of a message on the tcpip_thread: %d.\r\n", err);
-//            }
-//            i++;
-//        }
-//
-//        sys_msleep(1000U);
-//    }
+    for (i = 0; i < 5;)
+    {
+        if (connected)
+        {
+            err = tcpip_callback(publish_message, NULL);
+            if (err != ERR_OK)
+            {
+                PRINTF("Failed to invoke publishing of a message on the tcpip_thread: %d.\r\n", err);
+            }
+            i++;
+        }
+
+        sys_msleep(1000U);
+    }
 
     vTaskDelete(NULL);
 }
