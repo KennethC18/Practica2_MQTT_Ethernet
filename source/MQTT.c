@@ -101,6 +101,10 @@ static void mqtt_topic_subscribed_cb(void *arg, err_t err)
     }
 }
 
+static uint8_t check_topic(const char *topic){
+	uint8_t l = TOPIC1[0];
+}
+
 /*!
  * @brief Called when there is a message on a subscribed topic.
  */
@@ -109,6 +113,7 @@ static void mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len
     LWIP_UNUSED_ARG(arg);
 
     PRINTF("Received %u bytes from the topic \"%s\": \"", tot_len, topic);
+
 }
 
 /*!

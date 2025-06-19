@@ -336,7 +336,7 @@
 								<option id="com.crt.advproject.link.gcc.lto.867336617" name="Enable Link-time optimization (-flto)" superClass="com.crt.advproject.link.gcc.lto"/>
 								<option id="com.crt.advproject.link.gcc.lto.optmization.level.1255011379" name="Link-time optimization level" superClass="com.crt.advproject.link.gcc.lto.optmization.level"/>
 								<option id="com.crt.advproject.link.manage.1407510594" name="Manage linker script" superClass="com.crt.advproject.link.manage" value="true" valueType="boolean"/>
-								<option id="com.crt.advproject.link.script.1767834863" name="Linker script" superClass="com.crt.advproject.link.script" value="Practica2_lwip_mqtt_freertos_MQTT_Ethernet_Debug.ld" valueType="string"/>
+								<option id="com.crt.advproject.link.script.1767834863" name="Linker script" superClass="com.crt.advproject.link.script" value="Practica2_MQTT_Ethernet_Debug.ld" valueType="string"/>
 								<option id="com.crt.advproject.link.scriptdir.521967748" name="Script path" superClass="com.crt.advproject.link.scriptdir"/>
 								<option id="com.crt.advproject.link.crpenable.649656787" name="Enable automatic placement of Code Read Protection field in image" superClass="com.crt.advproject.link.crpenable"/>
 								<option id="com.crt.advproject.link.flashconfigenable.1531620128" name="Enable automatic placement of Flash Configuration field in image" superClass="com.crt.advproject.link.flashconfigenable" value="true" valueType="boolean"/>
@@ -710,7 +710,7 @@
 								<option id="com.crt.advproject.link.gcc.lto.optmization.level.453734246" name="Link-time optimization level" superClass="com.crt.advproject.link.gcc.lto.optmization.level"/>
 								<option id="com.crt.advproject.link.fpu.1785434343" name="Floating point" superClass="com.crt.advproject.link.fpu" value="com.crt.advproject.link.fpu.fpv5sp.hard" valueType="enumerated"/>
 								<option id="com.crt.advproject.link.manage.1151917637" name="Manage linker script" superClass="com.crt.advproject.link.manage" value="true" valueType="boolean"/>
-								<option id="com.crt.advproject.link.script.1812090329" name="Linker script" superClass="com.crt.advproject.link.script" value="Practica2_lwip_mqtt_freertos_MQTT_Ethernet_Release.ld" valueType="string"/>
+								<option id="com.crt.advproject.link.script.1812090329" name="Linker script" superClass="com.crt.advproject.link.script" value="Practica2_MQTT_Ethernet_Release.ld" valueType="string"/>
 								<option id="com.crt.advproject.link.scriptdir.929238432" name="Script path" superClass="com.crt.advproject.link.scriptdir"/>
 								<option id="com.crt.advproject.link.crpenable.1442294331" name="Enable automatic placement of Code Read Protection field in image" superClass="com.crt.advproject.link.crpenable"/>
 								<option id="com.crt.advproject.link.flashconfigenable.677093205" name="Enable automatic placement of Flash Configuration field in image" superClass="com.crt.advproject.link.flashconfigenable" value="true" valueType="boolean"/>
@@ -814,4 +814,5 @@
 &lt;/TargetConfig&gt;</projectStorage>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="refreshScope"/>
 </cproject>
