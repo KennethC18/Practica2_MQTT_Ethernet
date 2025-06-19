@@ -124,7 +124,7 @@ static void check_topic(const char *topic){
 		if(topic[i] == TOPIC3[i]){
 			received_topic = 3;
 		}
-		else if(topic[i] == TOPIC6[i]){
+		else if(topic[i] == TOPIC5[i]){
 			received_topic = 5;
 		}
 #endif
@@ -132,12 +132,9 @@ static void check_topic(const char *topic){
 	}
 }
 
+#if defined(DEVICE1) && !defined(DEVICE2)
 void manage_night_light(const uint8_t *data){
 	r = g = b = 0;
-
-	if (data == NULL) {
-		return;
-	}
 
 	char buffer[32];
 	strncpy(buffer, (char *)data, sizeof(buffer) - 1);
@@ -182,6 +179,18 @@ void manage_night_light(const uint8_t *data){
 
 	LED_Set(r, g, b);
 }
+#endif
+
+#if defined(DEVICE2) && !defined(DEVICE1)
+void manage_music_topic(const uint8_t *data){
+	if (strncmp(data, "OFF", 2) == 0) {
+		LED_Set(LED_RED_COLOUR);
+	}
+	else{
+		LED_Set(LED_GREEN_COLOUR);
+	}
+}
+#endif
 
 /*!
  * @brief Called when there is a message on a subscribed topic.
@@ -228,7 +237,7 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
 //        	manage_temp_topic();
         }
         else if(received_topic == 5){
-//        	manage_music_topic(data);
+        	manage_music_topic(data);
         }
 #endif
 
@@ -366,7 +375,7 @@ static void publish_message(void *ctx)
 
 	static const char *topic2   = TOPIC4;
 	static const char *message2 = "SMOKE";
-	static const char *message2 = "NO_SMOKE";
+	static const char *message3 = "NO_SMOKE";
 #endif
 
     LWIP_UNUSED_ARG(ctx);

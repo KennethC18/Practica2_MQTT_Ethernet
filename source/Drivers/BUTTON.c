@@ -7,6 +7,7 @@
 
 #include "BUTTON.h"
 #include "board.h"
+#include "fsl_io_mux.h"
 
 static volatile bool s_buttonInterruptFlag = false;
 static button_callback_t s_buttonCallback = NULL;
@@ -28,18 +29,22 @@ void BUTTON_Init(button_callback_t callback)
 	GPIO_PinInit(GPIO, 0U, 11U, &gpio0_pinM2_config);
 	GPIO_SetPinInterruptConfig(GPIO, 0U, 11U, &gpio0_pinM2_int_config);
 	GPIO_PinEnableInterrupt(GPIO, 0U, 11U, (uint32_t)kGPIO_InterruptA);
+    IO_MUX_SetPinMux(IO_MUX_GPIO11);
 
     gpio_pin_config_t sw_config = {kGPIO_DigitalInput, 0};
     gpio_interrupt_config_t config = {kGPIO_PinIntEnableEdge, kGPIO_PinIntEnableLowOrFall};
 
     s_buttonCallback = callback;
 
-    GPIO_PortInit(GPIO, BUTTON_SW_PORT);
-    GPIO_PinInit(GPIO, BUTTON_SW_PORT, BUTTON_SW_PIN, &sw_config);
+	/* Initialize GPIO for button */
+	GPIO_PortInit(GPIO, BUTTON_SW_PORT);
+	GPIO_PinInit(GPIO, BUTTON_SW_PORT, BUTTON_SW_PIN, &sw_config);
 
-    EnableIRQ(BUTTON_IRQ);
-    GPIO_SetPinInterruptConfig(GPIO, BUTTON_SW_PORT, BUTTON_SW_PIN, &config);
-    GPIO_PinEnableInterrupt(GPIO, BUTTON_SW_PORT, BUTTON_SW_PIN, 0);
+	/* Enable interrupt */
+	EnableIRQ(BUTTON_IRQ);
+	GPIO_SetPinInterruptConfig(GPIO, BUTTON_SW_PORT, BUTTON_SW_PIN, &config);
+	GPIO_PinEnableInterrupt(GPIO, BUTTON_SW_PORT, BUTTON_SW_PIN, 0);
+	NVIC_EnableIRQ(BUTTON_IRQ);
 }
 
 bool BUTTON_IsPressed(void)
